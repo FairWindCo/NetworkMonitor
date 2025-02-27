@@ -1,3 +1,4 @@
+#!/home/admin_root/NetworkMonitor/.venv/bin/python3
 import asyncio
 
 from sanic import Sanic
