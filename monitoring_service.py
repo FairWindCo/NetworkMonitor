@@ -16,7 +16,7 @@ async def test(request):
         'reporter': 1 if monitor.is_minute_task_alive else 0,
         'last_ping_task': monitor.last_ping,
         'last_report': monitor.last_report,
-        'hosts': monitor.hosts,
+        'hosts': monitor.configured_hosts,
     })
 
 @app.route("/hosts")

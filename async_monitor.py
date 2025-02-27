@@ -3,7 +3,7 @@ import random
 from collections import deque, defaultdict
 from datetime import datetime
 
-from icmplib import async_multiping, NameLookupError
+from icmplib import async_multiping, NameLookupError, is_hostname, async_resolve, resolve
 from pyexpat.errors import messages
 
 from async_schuduler import AsyncScheduler
@@ -50,12 +50,28 @@ class AsyncMonitor(AsyncScheduler):
         if hosts_group is not None:
             self.pinged_hosts.update(hosts_group)
 
+        self.hosts_ip = dict()
+        self.ips_host = dict()
+        for host in self.pinged_hosts:
+            if is_hostname(host):
+                ips = resolve(host)
+                self.hosts_ip[host] = ips
+                for ip in ips:
+                    self.ips_host[ip] = host
+
         self.group_hosts = defaultdict(set)
         if hosts_group is not None:
             for host,group_name in hosts_group.items():
-                self.group_hosts[group_name].add(host)
+                if is_hostname(host):
+                    self.group_hosts[group_name].update(self.hosts_ip[host])
+                else:
+                    self.group_hosts[group_name].add(host)
+
+
+
         self.host_results = {}
         self.group_results = {}
+        self.error_resolve_names = set()
 
 
 
@@ -76,6 +92,7 @@ class AsyncMonitor(AsyncScheduler):
             host = str(e).split('\'')[1]
             if host in self.pinged_hosts:
                 self.pinged_hosts.remove(host)
+                self.error_resolve_names.add(host)
 
 
 
@@ -100,6 +117,11 @@ class AsyncMonitor(AsyncScheduler):
         return list(self.pinged_hosts)
 
     @property
+    def pinged_ip(self):
+        return list(self.host_results.keys())
+
+
+    @property
     def groups(self):
         return {name:list(hosts) for name, hosts in self.group_hosts.items()}
 
@@ -109,7 +131,8 @@ class AsyncMonitor(AsyncScheduler):
 
     @property
     def hosts_statuses(self):
-        return {host_name:status.get_dict_for_json() for host_name, status in self.host_results.items()}
+        return {self.ips_host.get(host_name, host_name):status.get_dict_for_json()
+                for host_name, status in self.host_results.items()}
 
     @property
     def links_statuses(self):
@@ -128,6 +151,10 @@ class AsyncMonitor(AsyncScheduler):
     @property
     def is_alive(self):
         return self.is_seconds_task_alive and self.is_minute_task_alive
+
+    @property
+    def error_names(self):
+        return list(self.error_resolve_names)
 
 if __name__ == '__main__':
 
