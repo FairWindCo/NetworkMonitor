@@ -1,0 +1,15 @@
+#place to /etc/systemd/system/pingator.service
+[Unit]
+Description=Link Control Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+WorkingDirectory=/home/admin_root/NetworkMonitor/
+ExecStart=/home/admin_root/NetworkMonitor/monitoring_service.py
+
+[Install]
+WantedBy=multi-user.target

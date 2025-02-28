@@ -22,11 +22,11 @@ async def test(request):
 
 @app.route("/hosts")
 async def hosts(request):
-    return json(monitor.hosts)
+    return json({'hosts':monitor.hosts})
 
 @app.route("/links")
 async def links(request):
-    return json(monitor.links)
+    return json({'links':monitor.links})
 
 @app.route("/groups")
 async def groups(request):
@@ -35,12 +35,12 @@ async def groups(request):
 
 @app.route("/status_hosts")
 async def status_hosts(request):
-    return json(monitor.hosts_statuses)
+    return json({'status':monitor.hosts_statuses})
 
 
 @app.route("/status_links")
 async def status_links(request):
-    return json(monitor.links_statuses)
+    return json({'status':monitor.links_statuses})
 
 @app.route("/full")
 async def full(request):
