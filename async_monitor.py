@@ -118,7 +118,7 @@ class AsyncMonitor(AsyncScheduler):
 
     @property
     def hosts_json(self):
-        return {'index': host for host in self.pinged_hosts}
+        return [{'index': host} for host in self.pinged_hosts]
 
 
     @property
@@ -133,6 +133,11 @@ class AsyncMonitor(AsyncScheduler):
     @property
     def links(self):
         return list(self.group_hosts.keys())
+
+    @property
+    def links_json(self):
+        return [{'index': link} for link in self.group_hosts.keys()]
+
 
     @property
     def hosts_statuses(self):
