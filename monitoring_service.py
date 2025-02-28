@@ -17,7 +17,8 @@ async def test(request):
         'reporter': 1 if monitor.is_minute_task_alive else 0,
         'last_ping_task': monitor.last_ping,
         'last_report': monitor.last_report,
-        'hosts': monitor.configured_hosts,
+        'hosts': monitor.hosts,
+        'ips': monitor.hosts_ip,
     })
 
 @app.route("/hosts")
@@ -27,7 +28,8 @@ async def hosts(request):
 
 @app.route("/links")
 async def links(request):
-    return json({'links':monitor.links})
+    #return json({'links':monitor.links})
+    return json(monitor.links_json)
 
 @app.route("/groups")
 async def groups(request):
