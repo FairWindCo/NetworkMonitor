@@ -117,6 +117,11 @@ class AsyncMonitor(AsyncScheduler):
         return list(self.pinged_hosts)
 
     @property
+    def hosts_json(self):
+        return {'index': host for host in self.pinged_hosts}
+
+
+    @property
     def pinged_ip(self):
         return list(self.host_results.keys())
 

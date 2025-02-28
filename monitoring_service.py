@@ -22,7 +22,8 @@ async def test(request):
 
 @app.route("/hosts")
 async def hosts(request):
-    return json({'hosts':monitor.hosts})
+    #return json({'hosts':monitor.hosts})
+    return json(monitor.hosts_json)
 
 @app.route("/links")
 async def links(request):
